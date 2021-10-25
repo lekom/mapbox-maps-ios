@@ -8,10 +8,10 @@
 /// Mapbox map supports Mercator and Globe projections.
 @_spi(Experimental) public enum MapProjection: Codable, Hashable {
     // Wraps `MercatorMapProjection`
-    case mercator(_ projection: MercatorMapProjection)
+    case mercator(_ projection: MercatorMapProjection = MercatorMapProjection())
 
     // Wraps `GlobeMapProjection`
-    case globe(_ projection: GlobeMapProjection)
+    case globe(_ projection: GlobeMapProjection = GlobeMapProjection())
 
     /// Name of the wrapped projection
     public var name: String {
@@ -48,7 +48,7 @@
 /// Mercator projection.
 ///
 /// Mercator projection description: https://en.wikipedia.org/wiki/Mercator_projection
-@_spi(Experimental) public struct MercatorMapProjection: Codable, Hashable {
+public struct MercatorMapProjection: Codable, Hashable {
     public let name = "mercator"
 
     enum CodingKeys: String, CodingKey {
@@ -84,7 +84,7 @@
 /// when passing `GlobeMapProjection.transitionZoomLevel` during zooming in.
 ///
 /// See `GlobeMapProjection.transitionZoomLevel` for more details what projection will be used depending on current zoom level.
-@_spi(Experimental) public struct GlobeMapProjection: Codable, Hashable {
+public struct GlobeMapProjection: Codable, Hashable {
     public let name = "globe"
 
     enum CodingKeys: String, CodingKey {
