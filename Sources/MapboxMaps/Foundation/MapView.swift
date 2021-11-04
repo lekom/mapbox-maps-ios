@@ -36,6 +36,9 @@ open class MapView: UIView {
     /// Controls the addition/removal of annotations to the map.
     public internal(set) var annotations: AnnotationOrchestrator!
 
+    // TODO: the naming might be slightly confusing, as the annotations object already covers most cases. Need to check if they should be merged or not. Currently their implementation is pretty different.
+    public internal(set) var viewAnnotationManager: ViewAnnotationManager!
+
     /// Controls the display of attribution dialogs
     private var attributionDialogManager: AttributionDialogManager!
 
@@ -286,11 +289,10 @@ open class MapView: UIView {
         location = LocationManager(style: mapboxMap.style)
 
         // Initialize/Configure annotations orchestrator
-        annotations = AnnotationOrchestrator(
-            gestureRecognizer: gestures.singleTapGestureRecognizer,
-            mapFeatureQueryable: mapboxMap,
-            style: mapboxMap.style,
-            displayLinkCoordinator: self)
+        annotations = AnnotationOrchestrator(gestureRecognizer: gestures.singleTapGestureRecognizer, mapFeatureQueryable: mapboxMap, style: mapboxMap.style, displayLinkCoordinator: self)
+
+        // Initialize/Configure view annotations manager
+        viewAnnotationManager = ViewAnnotationManagerImpl(view: self, mapboxMap: mapboxMap)
     }
 
     private func checkForMetalSupport() {
