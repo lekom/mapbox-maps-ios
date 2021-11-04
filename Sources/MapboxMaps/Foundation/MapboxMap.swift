@@ -19,6 +19,12 @@ internal protocol MapboxMapProtocol: AnyObject {
     func endGesture()
     @discardableResult
     func onEvery(_ eventType: MapEvents.EventKind, handler: @escaping (Event) -> Void) -> Cancelable
+    // View annotation management
+    func setViewAnnotationPositionsUpdateListenerFor(listener: ViewAnnotationPositionsListener)
+    func addViewAnnotation(forId id: String, options: ViewAnnotationOptions)
+    func updateViewAnnotation(forId id: String, options: ViewAnnotationOptions)
+    func removeViewAnnotation(forId id: String)
+    func getViewAnnotationOptions(forId id: String) throws -> ViewAnnotationOptions
 }
 
 public final class MapboxMap: MapboxMapProtocol {
@@ -835,6 +841,59 @@ extension MapboxMap {
                                  featureId: featureId,
                                  stateKey: stateKey)
     }
+
+}
+
+// MARK: - View Annotations
+
+extension MapboxMap {
+
+    // TODO: Add documentation
+    public func setViewAnnotationPositionsUpdateListenerFor(listener: ViewAnnotationPositionsListener) {
+        __map.setViewAnnotationPositionsUpdateListenerFor(listener)
+    }
+
+    /**
+     * Add view annotation.
+     *
+     * @return position for all views that need to be updated on the screen or null if views' placement remained the same.
+     */
+    public func addViewAnnotation(forId id: String, options: ViewAnnotationOptions) {
+        __map.addViewAnnotation(forIdentifier: id, options: MapboxCoreMaps.ViewAnnotationOptions(options))
+    }
+
+    /**
+     * Update view annotation if it exists.
+     *
+     * @return position for all views that need to be updated on the screen or null if views' placement remained the same.
+     */
+    public func updateViewAnnotation(forId id: String, options: ViewAnnotationOptions) {
+        __map.updateViewAnnotation(forIdentifier: id, options: MapboxCoreMaps.ViewAnnotationOptions(options))
+    }
+
+    /**
+     * Remove view annotation if it exists.
+     *
+     * @return position for all views that need to be updated on the screen or null if views' placement remained the same.
+     */
+    public func removeViewAnnotation(forId id: String) {
+        __map.removeViewAnnotation(forIdentifier: id)
+    }
+
+    // TODO: Add documentation
+    // Make this throw, return ViewAnnotationOptions directly
+    public func getViewAnnotationOptions(forId id: String) throws -> ViewAnnotationOptions {
+        // TODO: error handling
+        let result = __map.getViewAnnotationOptions(forIdentifier: id)
+        guard !result.isError() else {
+            fatalError()
+        }
+        guard let options = result.value as? MapboxCoreMaps.ViewAnnotationOptions else {
+            fatalError()
+        }
+        return ViewAnnotationOptions(options)
+    }
+
 }
 
 // MARK: - MapProjection
