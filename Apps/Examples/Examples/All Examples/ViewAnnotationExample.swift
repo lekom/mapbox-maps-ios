@@ -84,7 +84,7 @@ final class ViewAnnotationExample: UIViewController, ExampleProtocol {
                 let feature = queriedFeatures.first?.feature,
                 let id = feature.identifier,
                 case let .string(idString) = id,
-                let viewAnnotation = self?.mapView.viewAnnotationManager.getViewAnnotation(byFeatureId: idString) {
+                let viewAnnotation = self?.mapView.viewAnnotations.getViewAnnotation(byFeatureId: idString) {
                 viewAnnotation.isHidden = !viewAnnotation.isHidden
             }
         }
@@ -152,26 +152,26 @@ final class ViewAnnotationExample: UIViewController, ExampleProtocol {
             anchor: .bottom
         )
         let sampleView = SampleView(point: point)
-        guard let annotationView = try? mapView.viewAnnotationManager.addViewAnnotation(sampleView, options) else {
+        guard let annotationView = try? mapView.viewAnnotations.addAnnotationView(withContent: sampleView, options: options) else {
             print("Failed to add annotation")
             return
         }
         sampleView.closeCallback = { [weak self] in
-            _ = self?.mapView.viewAnnotationManager.removeViewAnnotation(annotationView)
+            _ = self?.mapView.viewAnnotations.remove(annotationView)
         }
         sampleView.selectCallback = { [weak self] in
             guard let self = self else { return }
-            guard let options = self.mapView.viewAnnotationManager.getViewAnnotationOptions(byAnnotationView: annotationView) else { return }
+            guard let options = self.mapView.viewAnnotations.options(byAnnotationView: annotationView) else { return }
             let selected = !(options.selected ?? false)
             let pxDelta = selected ? Constants.SELECTED_ADD_COEF_PX : -Constants.SELECTED_ADD_COEF_PX
             sampleView.selectButton.setTitle(selected ? "DESELECT" : "SELECT", for: .normal)
-            _ = self.mapView.viewAnnotationManager.updateViewAnnotation(annotationView, ViewAnnotationOptions(
+            _ = self.mapView.viewAnnotations.update(annotationView, options: ViewAnnotationOptions(
                 width: (options.width ?? 0.0) + pxDelta,
                 height: (options.height ?? 0.0) + pxDelta,
                 selected: selected
             ))
         }
-        _ = mapView.viewAnnotationManager.updateViewAnnotation(annotationView, ViewAnnotationOptions(offsetY: markerHeight))
+        _ = mapView.viewAnnotations.update(annotationView, options: ViewAnnotationOptions(offsetY: markerHeight))
     }
 
 }

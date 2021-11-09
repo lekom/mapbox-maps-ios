@@ -37,7 +37,7 @@ open class MapView: UIView {
     public internal(set) var annotations: AnnotationOrchestrator!
 
     // TODO: the naming might be slightly confusing, as the annotations object already covers most cases. Need to check if they should be merged or not. Currently their implementation is pretty different.
-    public internal(set) var viewAnnotationManager: ViewAnnotationManager!
+    public internal(set) var viewAnnotations: ViewAnnotationManager!
 
     /// Controls the display of attribution dialogs
     private var attributionDialogManager: AttributionDialogManager!
@@ -68,6 +68,9 @@ open class MapView: UIView {
     internal private(set) var metalView: MTKView?
 
     private let cameraViewContainerView = UIView()
+
+    /// Holds ViewAnnotation views
+    private let viewAnnotationContainerView = SubviewInteractionOnlyView()
 
     /// Resource options for this map view
     internal private(set) var resourceOptions: ResourceOptions!
@@ -251,6 +254,15 @@ open class MapView: UIView {
             mapboxMap.setCamera(to: cameraOptions)
         }
 
+        insertSubview(viewAnnotationContainerView, at: 1)
+        viewAnnotationContainerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            viewAnnotationContainerView.topAnchor.constraint(equalTo: topAnchor),
+            viewAnnotationContainerView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            viewAnnotationContainerView.leftAnchor.constraint(equalTo: leftAnchor),
+            viewAnnotationContainerView.rightAnchor.constraint(equalTo: rightAnchor)
+        ])
+
         cameraViewContainerView.isHidden = true
         addSubview(cameraViewContainerView)
 
@@ -289,10 +301,14 @@ open class MapView: UIView {
         location = LocationManager(style: mapboxMap.style)
 
         // Initialize/Configure annotations orchestrator
-        annotations = AnnotationOrchestrator(gestureRecognizer: gestures.singleTapGestureRecognizer, mapFeatureQueryable: mapboxMap, style: mapboxMap.style, displayLinkCoordinator: self)
+        annotations = AnnotationOrchestrator(
+            gestureRecognizer: gestures.singleTapGestureRecognizer,
+            mapFeatureQueryable: mapboxMap,
+            style: mapboxMap.style,
+            displayLinkCoordinator: self)
 
         // Initialize/Configure view annotations manager
-        viewAnnotationManager = ViewAnnotationManagerImpl(view: self, mapboxMap: mapboxMap)
+        viewAnnotations = ViewAnnotationManager(containerView: viewAnnotationContainerView, mapboxMap: mapboxMap)
     }
 
     private func checkForMetalSupport() {

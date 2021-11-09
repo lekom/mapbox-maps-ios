@@ -2,11 +2,7 @@ import Foundation
 import UIKit
 
 public struct ViewAnnotationOptions: Hashable {
-    public var geometry: Geometry? {
-        didSet {
-            mbxGeometry = geometry.map({ MapboxCommon.Geometry.init($0) }) ?? nil
-        }
-    }
+    public var geometry: Geometry?
     public var width: CGFloat?
     public var height: CGFloat?
     public var associatedFeatureId: String?
@@ -16,9 +12,6 @@ public struct ViewAnnotationOptions: Hashable {
     public var offsetX: CGFloat?
     public var offsetY: CGFloat?
     public var selected: Bool?
-
-    // Used for hashing and constructing objc value
-    fileprivate var mbxGeometry: MapboxCommon.Geometry?
 
     //TODO: Add documentation
     public init(geometry: Geometry? = nil,
@@ -41,12 +34,11 @@ public struct ViewAnnotationOptions: Hashable {
         self.offsetX = offsetX
         self.offsetY = offsetY
         self.selected = selected
-        self.mbxGeometry = geometry.map({ MapboxCommon.Geometry.init($0) }) ?? nil
     }
 
     internal init(_ objcValue: MapboxCoreMaps.ViewAnnotationOptions) {
         self.init(
-            geometry: objcValue.__geometry.map({ Geometry($0) }) ?? nil,
+            geometry: objcValue.__geometry.map(Geometry.init) ?? nil,
             width: objcValue.__width?.CGFloat,
             height: objcValue.__height?.CGFloat,
             associatedFeatureId: objcValue.__associatedFeatureId,
@@ -60,7 +52,6 @@ public struct ViewAnnotationOptions: Hashable {
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(mbxGeometry)
         hasher.combine(width)
         hasher.combine(height)
         hasher.combine(associatedFeatureId)
@@ -75,7 +66,7 @@ public struct ViewAnnotationOptions: Hashable {
 
 extension MapboxCoreMaps.ViewAnnotationOptions {
     public convenience init(_ swiftValue: ViewAnnotationOptions) {
-        self.init(__geometry: swiftValue.mbxGeometry,
+        self.init(__geometry: swiftValue.geometry.map(MapboxCommon.Geometry.init),
                   associatedFeatureId: swiftValue.associatedFeatureId,
                   width: swiftValue.width as NSNumber?,
                   height: swiftValue.height as NSNumber?,
