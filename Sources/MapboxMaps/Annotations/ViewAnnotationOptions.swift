@@ -38,13 +38,13 @@ public struct ViewAnnotationOptions: Hashable {
 
     internal init(_ objcValue: MapboxCoreMaps.ViewAnnotationOptions) {
         self.init(
-            geometry: objcValue.__geometry.map(Geometry.init) ?? nil,
+            geometry: objcValue.__geometry.flatMap(Geometry.init(_:)),
             width: objcValue.__width?.CGFloat,
             height: objcValue.__height?.CGFloat,
             associatedFeatureId: objcValue.__associatedFeatureId,
             allowOverlap: objcValue.__allowOverlap?.boolValue,
             visible: objcValue.__visible?.boolValue,
-            anchor: objcValue.__anchor.map({ ViewAnnotationAnchor(rawValue: $0.intValue) }) ?? nil,
+            anchor: objcValue.__anchor.flatMap { ViewAnnotationAnchor(rawValue: $0.intValue) },
             offsetX: objcValue.__offsetX?.CGFloat,
             offsetY: objcValue.__offsetY?.CGFloat,
             selected: objcValue.__selected?.boolValue
