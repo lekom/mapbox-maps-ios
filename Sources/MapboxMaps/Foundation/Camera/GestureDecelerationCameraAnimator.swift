@@ -5,7 +5,7 @@ internal final class GestureDecelerationCameraAnimator: NSObject, CameraAnimator
     private var location: CGPoint
     private var velocity: CGPoint
     private let decelerationFactor: CGFloat
-    private let locationChangeHandler: (CGPoint) -> Void
+    private let locationChangeHandler: (_ location: CGPoint, _ previousLocation: CGPoint) -> Void
     private var previousDate: Date?
     private let dateProvider: DateProvider
     private weak var delegate: CameraAnimatorDelegate?
@@ -14,7 +14,7 @@ internal final class GestureDecelerationCameraAnimator: NSObject, CameraAnimator
     internal init(location: CGPoint,
                   velocity: CGPoint,
                   decelerationFactor: CGFloat,
-                  locationChangeHandler: @escaping (CGPoint) -> Void,
+                  locationChangeHandler: @escaping (_ location: CGPoint, _ previousLocation: CGPoint) -> Void,
                   dateProvider: DateProvider,
                   delegate: CameraAnimatorDelegate) {
         self.location = location
@@ -53,12 +53,13 @@ internal final class GestureDecelerationCameraAnimator: NSObject, CameraAnimator
         self.previousDate = currentDate
 
         let elapsedTime = CGFloat(currentDate.timeIntervalSince(previousDate))
+        let previousLocation = location
 
         // calculate new location showing how far we have traveled
         location.x += velocity.x * elapsedTime
         location.y += velocity.y * elapsedTime
 
-        locationChangeHandler(location)
+        locationChangeHandler(location, previousLocation)
 
         // deceleration factor should be applied to the velocity once per millisecond
         velocity.x *= pow(decelerationFactor, (elapsedTime * 1000))
