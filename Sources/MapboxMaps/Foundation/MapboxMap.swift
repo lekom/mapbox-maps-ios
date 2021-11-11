@@ -20,7 +20,7 @@ internal protocol MapboxMapProtocol: AnyObject {
     @discardableResult
     func onEvery(_ eventType: MapEvents.EventKind, handler: @escaping (Event) -> Void) -> Cancelable
     // View annotation management
-    func setViewAnnotationPositionsUpdateListener(_ listener: ViewAnnotationPositionsListener?)
+    func setViewAnnotationPositionsUpdateListener(_ listener: ViewAnnotationPositionsUpdateListener?)
     func addViewAnnotation(withId id: String, options: ViewAnnotationOptions)
     func updateViewAnnotation(withId id: String, options: ViewAnnotationOptions)
     func removeViewAnnotation(withId id: String)
@@ -849,7 +849,7 @@ extension MapboxMap {
 extension MapboxMap {
 
     // TODO: Add documentation
-    internal func setViewAnnotationPositionsUpdateListener(_ listener: ViewAnnotationPositionsListener?) {
+    internal func setViewAnnotationPositionsUpdateListener(_ listener: ViewAnnotationPositionsUpdateListener?) {
         __map.setViewAnnotationPositionsUpdateListenerFor(listener)
     }
 

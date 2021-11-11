@@ -17,7 +17,7 @@ public final class ViewAnnotationManager {
     internal init(containerView: SubviewInteractionOnlyView, mapboxMap: MapboxMapProtocol) {
         self.containerView = containerView
         self.mapboxMap = mapboxMap
-        let delegatingPositionsListener = DelegatingViewAnnotationPositionsListener()
+        let delegatingPositionsListener = DelegatingViewAnnotationPositionsUpdateListener()
         delegatingPositionsListener.delegate = self
         mapboxMap.setViewAnnotationPositionsUpdateListener(delegatingPositionsListener)
     }
@@ -126,7 +126,7 @@ public final class ViewAnnotationManager {
 
 }
 
-extension ViewAnnotationManager: DelegatingViewAnnotationPositionsListenerDelegate {
+extension ViewAnnotationManager: DelegatingViewAnnotationPositionsUpdateListenerDelegate {
 
     public func onViewAnnotationPositionsUpdate(forPositions positions: [ViewAnnotationPositionDescriptor]) {
         placeAnnotations(positions: positions)
