@@ -26,7 +26,7 @@ public final class ViewAnnotationManager {
         mapboxMap.setViewAnnotationPositionsUpdateListener(nil)
     }
 
-    // MARK: - ViewAnnotationManagerInterface protocol functions
+    // MARK: - Public API
 
     public func addAnnotationView(withContent view: UIView, options: ViewAnnotationOptions) throws -> AnnotationView {
         guard options.geometry != nil else {
@@ -61,26 +61,21 @@ public final class ViewAnnotationManager {
         return true
     }
 
-    public func getViewAnnotation(byFeatureId identifier: String) -> AnnotationView? {
+    public func viewAnnotation(byFeatureId identifier: String) -> AnnotationView? {
         guard let id = annotationViewsById.keys.first(where: { id in
             (try? mapboxMap.options(forViewAnnotationWithId: id).associatedFeatureId == identifier) ?? false
         }) else {
-            // TODO: Error for not available annotation
             return nil
         }
         return annotationViewsById[id]
     }
 
     public func options(byAnnotationView view: AnnotationView) -> ViewAnnotationOptions? {
-        guard let id = annotationIdByViews[view] else {
-            // TODO: gracefully handle error
-            return nil
-        }
-        return try? mapboxMap.options(forViewAnnotationWithId: id)
+        return annotationIdByViews[view].flatMap{ try? mapboxMap.options(forViewAnnotationWithId: $0) }
     }
 
     public func options(byFeatureId identifier: String) -> ViewAnnotationOptions? {
-        return getViewAnnotation(byFeatureId: identifier).map({ view in options(byAnnotationView: view) }) ?? nil
+        return viewAnnotation(byFeatureId: identifier).flatMap{ options(byAnnotationView: $0) }
     }
 
     // MARK: - Internal functions
@@ -102,7 +97,7 @@ public final class ViewAnnotationManager {
                 size: CGSize(width: CGFloat(position.width), height: CGFloat(position.height))
             )
 
-            annotationView.setVisibilityWithoutUpdate(isHidden: false)
+            annotationView.setInternalVisibility(isHidden: false)
             visibleAnnotationIds.insert(position.identifier)
         }
 
@@ -110,7 +105,7 @@ public final class ViewAnnotationManager {
         for id in annotationsToHide {
             validateAnnotation(byAnnotationId: id)
             if let annotationView = annotationViewsById[id] {
-                annotationView.setVisibilityWithoutUpdate(isHidden: true)
+                annotationView.setInternalVisibility(isHidden: true)
             }
         }
     }
@@ -122,9 +117,10 @@ public final class ViewAnnotationManager {
         if annotationView.subviews.isEmpty || annotationView.superview == nil {
             remove(annotationView)
         }
+        // View is still considered for layout calculation, users should not modify the visibility of the wrapped view
         if let wrappedView = annotationView.subviews.first, wrappedView.isHidden {
-            // View is still considered for layout calculation, users should not modify the visibility of the wrapped view
             // TODO: Print warning
+            Log.warning(forMessage: "Visibility changed for wrapped view", category: "Annotations")
         }
     }
 
@@ -183,7 +179,7 @@ public final class AnnotationView: SubviewInteractionOnlyView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    internal func setVisibilityWithoutUpdate(isHidden: Bool) {
+    internal func setInternalVisibility(isHidden: Bool) {
         ignoreUserEvents = true
         self.isHidden = isHidden
         ignoreUserEvents = false

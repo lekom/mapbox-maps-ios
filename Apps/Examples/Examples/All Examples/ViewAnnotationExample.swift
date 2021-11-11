@@ -62,8 +62,6 @@ final class ViewAnnotationExample: UIViewController, ExampleProtocol {
             styleChangeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -32),
             styleChangeButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16)
         ])
-
-        //addManyAnnotations()
     }
 
     // MARK: - Action handlers
@@ -84,7 +82,7 @@ final class ViewAnnotationExample: UIViewController, ExampleProtocol {
                 let feature = queriedFeatures.first?.feature,
                 let id = feature.identifier,
                 case let .string(idString) = id,
-                let viewAnnotation = self?.mapView.viewAnnotations.getViewAnnotation(byFeatureId: idString) {
+                let viewAnnotation = self?.mapView.viewAnnotations.viewAnnotation(byFeatureId: idString) {
                 viewAnnotation.isHidden = !viewAnnotation.isHidden
             }
         }
@@ -121,14 +119,6 @@ final class ViewAnnotationExample: UIViewController, ExampleProtocol {
     }
 
     // MARK: - Annotation management
-
-    private func addManyAnnotations() {
-        for lat in 0...30 {
-            for lon in 0...30 {
-                addViewAnnotation(CLLocationCoordinate2D(latitude: Double(lat), longitude: Double(lon)))
-            }
-        }
-    }
 
     private func addMarkerAndReturnId(_ point: Point) -> String {
         let currentId = "\(Constants.MARKER_ID_PREFIX)\(markerId)"
