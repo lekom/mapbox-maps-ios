@@ -105,9 +105,8 @@ public struct Examples {
         Example(title: "Add multiple annotations to a map",
                 description: "Add default and custom annotations to a map.",
                 type: MultiplePointAnnotationsExample.self),
-        // TODO: update title and description
-        Example(title: "Add view annotations",
-                description: "Add view annotations to a map.",
+        Example(title: "Add view annotations to a map",
+                description: "Use custom view in annotations on a map.",
                 type: ViewAnnotationExample.self)
     ]
 

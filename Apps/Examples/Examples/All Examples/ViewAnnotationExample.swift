@@ -82,7 +82,7 @@ final class ViewAnnotationExample: UIViewController, ExampleProtocol {
                 let feature = queriedFeatures.first?.feature,
                 let id = feature.identifier,
                 case let .string(idString) = id,
-                let viewAnnotation = self?.mapView.viewAnnotations.viewAnnotation(byFeatureId: idString) {
+                let viewAnnotation = try? self?.mapView.viewAnnotations.viewAnnotation(byFeatureId: idString) {
                 viewAnnotation.isHidden = !viewAnnotation.isHidden
             }
         }
@@ -147,21 +147,21 @@ final class ViewAnnotationExample: UIViewController, ExampleProtocol {
             return
         }
         sampleView.closeCallback = { [weak self] in
-            _ = self?.mapView.viewAnnotations.remove(annotationView)
+            try? self?.mapView.viewAnnotations.remove(annotationView)
         }
         sampleView.selectCallback = { [weak self] in
             guard let self = self else { return }
-            guard let options = self.mapView.viewAnnotations.options(byAnnotationView: annotationView) else { return }
+            guard let options = try? self.mapView.viewAnnotations.options(byAnnotationView: annotationView) else { return }
             let selected = !(options.selected ?? false)
             let pxDelta = selected ? Constants.SELECTED_ADD_COEF_PX : -Constants.SELECTED_ADD_COEF_PX
             sampleView.selectButton.setTitle(selected ? "DESELECT" : "SELECT", for: .normal)
-            _ = self.mapView.viewAnnotations.update(annotationView, options: ViewAnnotationOptions(
+            try? self.mapView.viewAnnotations.update(annotationView, options: ViewAnnotationOptions(
                 width: (options.width ?? 0.0) + pxDelta,
                 height: (options.height ?? 0.0) + pxDelta,
                 selected: selected
             ))
         }
-        _ = mapView.viewAnnotations.update(annotationView, options: ViewAnnotationOptions(offsetY: markerHeight))
+        try? mapView.viewAnnotations.update(annotationView, options: ViewAnnotationOptions(offsetY: markerHeight))
     }
 
 }
@@ -213,12 +213,12 @@ private class SampleView: UIView {
             closeButton.topAnchor.constraint(equalTo: topAnchor, constant: 4),
             closeButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -4),
 
-            centerImageView.bottomAnchor.constraint(equalTo: selectButton.topAnchor, constant: -4),
+            centerImageView.topAnchor.constraint(equalTo: topAnchor, constant: 4),
             centerImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 4),
             centerImageView.widthAnchor.constraint(equalToConstant: 32),
             centerImageView.heightAnchor.constraint(equalToConstant: 32),
 
-            centerLabel.bottomAnchor.constraint(equalTo: selectButton.topAnchor, constant: -4),
+            centerLabel.topAnchor.constraint(equalTo: topAnchor, constant: 4),
             centerLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -4),
             centerLabel.leftAnchor.constraint(equalTo: centerImageView.rightAnchor, constant: 4),
 
