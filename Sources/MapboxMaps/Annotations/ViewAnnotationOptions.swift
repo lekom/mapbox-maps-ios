@@ -1,19 +1,56 @@
 import Foundation
 import UIKit
 
+/// Stores layout and visibilty settings for a `ViewAnnotation`
 public struct ViewAnnotationOptions: Hashable {
+    /// Geometry the view annotation is bound to. Currently only support 'point' geometry type.
+    /// Note: geometry must be set when adding a new view annotation, otherwise an operation error will be returned from the call that is associated to this option.
     public var geometry: Geometry?
+    
+    /// View annotation width in pixels.
     public var width: CGFloat?
+    
+    /// View annotation height in pixels.
     public var height: CGFloat?
+    
+    /// Optional style symbol id connected to given view annotation.
+    ///
+    /// View annotation's visibility behaviour becomes tied to feature visibility where feature could represent an icon or a text label.
+    /// E.g. if the bounded symbol is not visible view annotation also becomes not visible.
+    ///
+    /// Note: Invalid associatedFeatureId (meaning no actual symbol has such feature id) will lead to the cooresponding annotation to be invisible.
     public var associatedFeatureId: String?
+        
+    /// If true, the annotation will be visible even if it collides with other previously drawn annotations.
+    /// If allowOverlap is null, default value `false` will be applied.
     public var allowOverlap: Bool?
+    
+    /// Specifies if this view annotation is visible or not.
+    ///
+    /// Note: If this property is not specified explicitly when creating / updating view annotation, visibility will be
+    /// handled automatically based on the `ViewAnnotation` view's visibility e.g. if actual view is set to be not visible the SDK
+    /// will automatically update view annotation to have `visible = false`.
+    ///
+    /// If visible is null, default value `true` will be applied.
     public var visible: Bool?
+    
+    /// Anchor describing where the view annotation will be located relatively to given geometry.
+    /// If anchor is null, default value `CENTER` will be applied.
     public var anchor: ViewAnnotationAnchor?
+    
+    /// Extra X offset in `platform pixels`.
+    /// Providing positive value moves view annotation to the right while negative moves it to the left.
     public var offsetX: CGFloat?
+    
+    /// Extra Y offset in `platform pixels`.
+    /// Providing positive value moves view annotation to the top while negative moves it to the bottom.
     public var offsetY: CGFloat?
+    
+    /// Specifies if this view annotation is selected meaning it should be placed on top of others.
+    /// If selected in null, default value `false` will be applied.
     public var selected: Bool?
 
-    //TODO: Add documentation
+    /// Initializes a `ViewAnnotationOptions`
     public init(geometry: Geometry? = nil,
                 width: CGFloat? = nil,
                 height: CGFloat? = nil,
