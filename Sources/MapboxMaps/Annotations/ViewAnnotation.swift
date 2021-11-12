@@ -96,7 +96,7 @@ public final class ViewAnnotationManager {
     ///
     /// - Throws:
     ///   - `ViewAnnotationManagerError.annotationNotFound`: the supplioed view was not found
-    ///   - `ViewAnnotationManagerError.removalFailure`: errors during the up date of the view (eg. incorrect parameters)
+    ///   - `ViewAnnotationManagerError.updateFailure`: errors during the up date of the view (eg. incorrect parameters)
     public func update(_ annotatonView: AnnotationView, options: ViewAnnotationOptions) throws {
         guard let id = annotationIdByViews[annotatonView] else {
             throw ViewAnnotationManagerError.annotationNotFound
