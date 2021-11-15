@@ -4,7 +4,7 @@
   "description": "mapbox-maps-ios",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mapbox/mapbox-maps-ios.git"
+    "url": "https://github.com/lekom/mapbox-maps-ios"
   },
   "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
