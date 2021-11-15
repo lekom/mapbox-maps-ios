@@ -189,6 +189,20 @@ public class CameraAnimationsManager: CameraAnimationsManagerProtocol {
         cameraAnimatorsSet.add(cameraAnimator)
         return cameraAnimator
     }
+    
+    public func makeAnimator(from animator: UIViewPropertyAnimator,
+                             animationOwner: AnimationOwner = .unspecified,
+                             animations: @escaping (inout CameraTransition) -> Void) -> BasicCameraAnimator {
+        let cameraAnimator = BasicCameraAnimator(
+            propertyAnimator: propertyAnimator,
+            owner: animationOwner,
+            mapboxMap: mapboxMap,
+            cameraView: makeCameraView(),
+            delegate: self)
+        cameraAnimator.addAnimations(animations)
+        cameraAnimatorsSet.add(cameraAnimator)
+        return cameraAnimator
+    }
 
     /// Convenience to create a `BasicCameraAnimator` and will add it to a list of `BasicCameraAnimator` to track the lifecycle of that animation.
     ///
